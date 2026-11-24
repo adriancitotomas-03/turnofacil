@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TurnoFácil — Peluquería & Salón</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="app-contenedor">
+    
+    <!-- Encabezado institucional del salón -->
+    <header class="app-header">
+      <div class="header-contenido">
+        <div class="marca">
+          <span class="marca-icono" aria-hidden="true">✂️</span>
+          <div>
+            <h1 class="marca-titulo">TurnoFácil</h1>
+            <p class="marca-subtitulo">Peluquería & Salón de Estética</p>
+          </div>
+        </div>
+        <div class="header-indicador">
+          <span class="punto-en-linea" aria-hidden="true"></span>
+          <span>Agenda de Salón Abierta</span>
+        </div>
+      </div>
+
+      <!-- Barra de pestañas -->
+      <nav class="tabs-nav" role="tablist" aria-label="Secciones de la aplicación">
+        <button type="button"
+                id="tab-nuevo"
+                role="tab"
+                aria-selected="true"
+                aria-controls="panel-nuevo-turno"
+                class="tab-boton activo"
+                data-tab="nuevo-turno">
+          <span>Nuevo Turno</span>
+        </button>
+        <button type="button"
+                id="tab-agenda"
+                role="tab"
+                aria-selected="false"
+                aria-controls="panel-agenda"
+                class="tab-boton"
+                data-tab="agenda">
+          <span>Agenda</span>
+          <span id="badge-contador-turnos" class="badge-contador" aria-label="Cantidad de turnos">0</span>
+        </button>
+        <button type="button"
+                id="tab-dashboard"
+                role="tab"
+                aria-selected="false"
+                aria-controls="panel-dashboard"
+                class="tab-boton"
+                data-tab="dashboard">
+          <span>Dashboard</span>
+        </button>
+      </nav>
+    </header>
+
+    <!-- Contenido principal -->
+    <main class="app-main">
+
+      <!-- ================= PESTAÑA 1: NUEVO TURNO ================= -->
+      <section id="panel-nuevo-turno"
+               role="tabpanel"
+               aria-labelledby="tab-nuevo"
+               class="panel-contenido activo">
+        <div class="panel-layout-grid">
+          
+          <!-- Formulario de reserva -->
+          <div class="tarjeta tarjeta-formulario">
+            <div class="tarjeta-cabecera">
+              <h2 class="tarjeta-titulo">Reservar turno de peluquería</h2>
+              <p class="tarjeta-descripcion">Elegí la categoría, el servicio deseado, el horario y los datos de contacto del cliente.</p>
+            </div>
+
+            <form id="formulario-turno" class="formulario-turno" novalidate>
+              <div id="mensaje-formulario" class="mensaje-alerta" aria-live="polite" hidden></div>
+
+              <!-- Paso 1: Selección de servicio -->
+              <fieldset class="grupo-campos">
+                <legend class="grupo-leyenda">1. Servicio del Salón</legend>
+                
+                <div class="campo-fila">
+                  <div class="campo">
+                    <label for="rubro" class="campo-etiqueta">Categoría <span class="requerido">*</span></label>
+                    <select id="rubro" name="rubro" class="campo-control" required>
+                      <option value="">Seleccione una categoría...</option>
+                    </select>
+                  </div>
+
+                  <div class="campo">
+                    <label for="servicio" class="campo-etiqueta">Servicio <span class="requerido">*</span></label>
+                    <select id="servicio" name="servicio" class="campo-control" disabled required>
+                      <option value="">Primero seleccione una categoría</option>
+                    </select>
+                  </div>
+                </div>
+              </fieldset>
+
+              <!-- Paso 2: Selección de fecha y hora -->
+              <fieldset class="grupo-campos">
+                <legend class="grupo-leyenda">2. Fecha y Horario disponible</legend>
+
+                <div class="campo">
+                  <label for="fecha" class="campo-etiqueta">Fecha de atención <span class="requerido">*</span></label>
+                  <input type="date" id="fecha" name="fecha" class="campo-control" required>
+                </div>
+
+                <div class="campo">
+                  <span class="campo-etiqueta" id="etiqueta-horarios">Horarios disponibles (09:00 a 17:30) <span class="requerido">*</span></span>
+                  <div id="grilla-horarios"
+                       class="grilla-horarios"
+                       role="group"
+                       aria-labelledby="etiqueta-horarios">
+                    <p class="texto-ayuda">Seleccione una fecha y una categoría para consultar los horarios disponibles.</p>
+                  </div>
+                  <input type="hidden" id="horario-seleccionado" name="horario-seleccionado" value="">
+                </div>
+              </fieldset>
+
+              <!-- Paso 3: Datos del cliente -->
+              <fieldset class="grupo-campos">
+                <legend class="grupo-leyenda">3. Datos del Cliente</legend>
+
+                <div class="campo">
+                  <label for="cliente-nombre" class="campo-etiqueta">Nombre y Apellido <span class="requerido">*</span></label>
+                  <input type="text" id="cliente-nombre" name="cliente-nombre" class="campo-control" placeholder="Ej: Julieta Gómez" required>
+                </div>
+
+                <div class="campo-fila">
+                  <div class="campo">
+                    <label for="cliente-telefono" class="campo-etiqueta">Teléfono <span class="requerido">*</span></label>
+                    <input type="tel" id="cliente-telefono" name="cliente-telefono" class="campo-control" placeholder="Ej: 11-4567-8901" required>
+                  </div>
+
+                  <div class="campo">
+                    <label for="cliente-email" class="campo-etiqueta">Correo electrónico <span class="requerido">*</span></label>
+                    <input type="email" id="cliente-email" name="cliente-email" class="campo-control" placeholder="Ej: julieta@ejemplo.com" required>
+                  </div>
+                </div>
+
+                <div class="campo">
+                  <label for="cliente-notas" class="campo-etiqueta">Preferencias o notas (opcional)</label>
+                  <textarea id="cliente-notas" name="cliente-notas" class="campo-control campo-textarea" rows="2" placeholder="Ej: cabello largo, alergia a decolorante, fade bajo"></textarea>
+                </div>
+              </fieldset>
+
+              <div class="formulario-acciones">
+                <button type="submit" id="boton-reservar" class="boton boton-primario">
+                  <span>Confirmar Turno</span>
+                </button>
+                <button type="reset" id="boton-limpiar-formulario" class="boton boton-secundario">
+                  <span>Limpiar formulario</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Comprobante / Confirmación de reserva -->
+          <div class="tarjeta tarjeta-resumen">
+            <div class="tarjeta-cabecera">
+              <h2 class="tarjeta-titulo">Comprobante de Turno</h2>
+              <p class="tarjeta-descripcion">Detalle oficial de la reserva confirmada.</p>
+            </div>
+
+            <div id="comprobante-vacio" class="estado-vacio-resumen">
+              <span class="icono-vacio" aria-hidden="true">💈</span>
+              <p>Aún no se ha emitido ningún turno en esta sesión.</p>
+              <small>Al confirmar una reserva, aparecerán aquí los datos del comprobante y código identificador.</small>
+            </div>
+
+            <article id="comprobante-reserva" class="comprobante-ticket" hidden>
+              <div class="ticket-encabezado">
+                <span class="ticket-etiqueta">COMPROBANTE SALÓN</span>
+                <span id="ticket-id" class="ticket-id">TRN-000</span>
+              </div>
+              <div class="ticket-cuerpo">
+                <div class="ticket-fila">
+                  <span class="ticket-clave">Cliente:</span>
+                  <span id="ticket-cliente" class="ticket-valor">-</span>
+                </div>
+                <div class="ticket-fila">
+                  <span class="ticket-clave">Contacto:</span>
+                  <span id="ticket-contacto" class="ticket-valor">-</span>
+                </div>
+                <div class="ticket-fila">
+                  <span class="ticket-clave">Categoría:</span>
+                  <span id="ticket-rubro" class="ticket-valor">-</span>
+                </div>
+                <div class="ticket-fila">
+                  <span class="ticket-clave">Servicio:</span>
+                  <span id="ticket-servicio" class="ticket-valor">-</span>
+                </div>
+                <div class="ticket-fila">
+                  <span class="ticket-clave">Fecha y Hora:</span>
+                  <span id="ticket-fechahora" class="ticket-valor destacada">-</span>
+                </div>
+                <div class="ticket-fila">
+                  <span class="ticket-clave">Estado:</span>
+                  <span id="ticket-estado" class="badge badge-confirmado">Confirmado</span>
+                </div>
+              </div>
+              <div class="ticket-pie">
+                <button type="button" id="boton-ir-agenda" class="boton boton-pequeno boton-secundario">
+                  Ver en la Agenda
+                </button>
+                <button type="button" id="boton-nuevo-otro" class="boton boton-pequeno boton-primario">
+                  Agendar otro
+                </button>
+              </div>
+            </article>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ================= PESTAÑA 2: AGENDA ================= -->
+      <section id="panel-agenda"
+               role="tabpanel"
+               aria-labelledby="tab-agenda"
+               class="panel-contenido"
+               hidden>
+        <div class="tarjeta">
+          
+          <div class="tarjeta-cabecera fila-flexible">
+            <div>
+              <h2 class="tarjeta-titulo">Agenda del Salón</h2>
+              <p class="tarjeta-descripcion">Consultá, filtrá, reprogramá o gestioná el estado de los turnos de peluquería.</p>
+            </div>
+            <div class="acciones-agenda-cabecera">
+              <button type="button" id="boton-ir-nuevo" class="boton boton-primario boton-pequeno">
+                + Nuevo Turno
+              </button>
+            </div>
+          </div>
+
+          <!-- Barra de filtros -->
+          <div class="barra-filtros" role="search" aria-label="Filtros de agenda">
+            <div class="filtro-item buscador">
+              <label for="filtro-busqueda" class="sr-only">Buscar por cliente, teléfono o código</label>
+              <input type="search"
+                     id="filtro-busqueda"
+                     class="campo-control"
+                     placeholder="Buscar por cliente, teléfono o código...">
+            </div>
+
+            <div class="filtro-item">
+              <label for="filtro-rubro" class="sr-only">Filtrar por categoría</label>
+              <select id="filtro-rubro" class="campo-control">
+                <option value="">Todas las categorías</option>
+              </select>
+            </div>
+
+            <div class="filtro-item">
+              <label for="filtro-estado" class="sr-only">Filtrar por estado</label>
+              <select id="filtro-estado" class="campo-control">
+                <option value="">Todos los estados</option>
+                <option value="confirmado">Confirmados</option>
+                <option value="atendido">Atendidos</option>
+                <option value="cancelado">Cancelados</option>
+              </select>
+            </div>
+
+            <div class="filtro-item">
+              <label for="filtro-fecha" class="sr-only">Filtrar por fecha</label>
+              <input type="date" id="filtro-fecha" class="campo-control" title="Filtrar por fecha">
+            </div>
+
+            <div class="filtro-item">
+              <button type="button" id="boton-limpiar-filtros" class="boton boton-secundario boton-pequeno">
+                Limpiar filtros
+              </button>
+            </div>
+          </div>
+
+          <!-- Tabla de turnos -->
+          <div class="tabla-contenedor" tabindex="0" aria-label="Tabla de turnos registrados">
+            <table id="tabla-turnos" class="tabla-datos">
+              <thead>
+                <tr>
+                  <th scope="col" class="col-codigo">Código</th>
+                  <th scope="col">Cliente / Contacto</th>
+                  <th scope="col">Categoría & Servicio</th>
+                  <th scope="col">Fecha & Hora</th>
+                  <th scope="col">Estado</th>
+                  <th scope="col" class="col-acciones">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="cuerpo-tabla-turnos">
+                <!-- Se llena dinámicamente con JavaScript -->
+              </tbody>
+            </table>
+
+            <!-- Estado cuando no hay turnos -->
+            <div id="agenda-vacia" class="estado-vacio-tabla" hidden>
+              <p>No se encontraron turnos con los criterios seleccionados.</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ================= PESTAÑA 3: DASHBOARD ================= -->
+      <section id="panel-dashboard"
+               role="tabpanel"
+               aria-labelledby="tab-dashboard"
+               class="panel-contenido"
+               hidden>
+        
+        <!-- Tarjetas KPI -->
+        <div class="grid-kpis">
+          <div class="kpi-tarjeta">
+            <span class="kpi-etiqueta">Total Registrados</span>
+            <span id="kpi-total" class="kpi-valor">0</span>
+            <span class="kpi-subtexto">Historial de citas</span>
+          </div>
+
+          <div class="kpi-tarjeta kpi-hoy">
+            <span class="kpi-etiqueta">Turnos para Hoy</span>
+            <span id="kpi-hoy" class="kpi-valor">0</span>
+            <span id="kpi-hoy-fecha" class="kpi-subtexto">Fecha actual</span>
+          </div>
+
+          <div class="kpi-tarjeta kpi-atendido">
+            <span class="kpi-etiqueta">Atendidos</span>
+            <span id="kpi-atendidos" class="kpi-valor">0</span>
+            <span id="kpi-tasa-atendidos" class="kpi-subtexto">0% de cumplimiento</span>
+          </div>
+
+          <div class="kpi-tarjeta kpi-cancelado">
+            <span class="kpi-etiqueta">Cancelados</span>
+            <span id="kpi-cancelados" class="kpi-valor">0</span>
+            <span id="kpi-tasa-cancelados" class="kpi-subtexto">0% de cancelaciones</span>
+          </div>
+        </div>
+
+        <!-- Secciones de desglose -->
+        <div class="dashboard-detalles-grid">
+          
+          <!-- Distribución por Categoría -->
+          <div class="tarjeta">
+            <div class="tarjeta-cabecera">
+              <h2 class="tarjeta-titulo">Distribución por Categoría</h2>
+              <p class="tarjeta-descripcion">Volumen de reservas acumuladas en cada especialidad del salón.</p>
+            </div>
+            <div id="lista-distribucion-rubros" class="lista-distribucion">
+              <!-- Se genera dinámicamente -->
+            </div>
+          </div>
+
+          <!-- Próximos turnos del día -->
+          <div class="tarjeta">
+            <div class="tarjeta-cabecera">
+              <h2 class="tarjeta-titulo">Próximos Turnos de Hoy</h2>
+              <p class="tarjeta-descripcion">Clientes en espera o por atender en la jornada de hoy.</p>
+            </div>
+            <ul id="lista-proximos-turnos" class="lista-proximos" aria-label="Lista de próximos turnos">
+              <!-- Se llena dinámicamente -->
+            </ul>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Diálogo Modal: Reprogramar turno -->
+    <dialog id="modal-reprogramar" class="modal-dialogo" aria-labelledby="modal-reprogramar-titulo">
+      <form id="formulario-reprogramar" method="dialog" class="modal-contenido">
+        <div class="modal-cabecera">
+          <h3 id="modal-reprogramar-titulo" class="modal-titulo">Reprogramar Turno</h3>
+          <button type="button" id="boton-cerrar-modal-reprogramar" class="boton-cerrar" aria-label="Cerrar ventana">✕</button>
+        </div>
+        
+        <div class="modal-cuerpo">
+          <p id="modal-reprogramar-info" class="modal-descripcion"></p>
+          <input type="hidden" id="reprogramar-turno-id" value="">
+          <input type="hidden" id="reprogramar-rubro" value="">
+
+          <div class="campo">
+            <label for="reprogramar-fecha" class="campo-etiqueta">Nueva Fecha</label>
+            <input type="date" id="reprogramar-fecha" class="campo-control" required>
+          </div>
+
+          <div class="campo">
+            <span class="campo-etiqueta">Nuevo Horario disponible</span>
+            <div id="reprogramar-grilla-horarios" class="grilla-horarios" role="group">
+              <p class="texto-ayuda">Elija una fecha para consultar horarios disponibles.</p>
+            </div>
+            <input type="hidden" id="reprogramar-horario-seleccionado" value="">
+          </div>
+
+          <div id="modal-reprogramar-error" class="mensaje-alerta mensaje-error" hidden></div>
+        </div>
+
+        <div class="modal-pie">
+          <button type="button" id="boton-cancelar-reprogramar" class="boton boton-secundario">Cancelar</button>
+          <button type="submit" id="boton-confirmar-reprogramar" class="boton boton-primario">Confirmar Reprogramación</button>
+        </div>
+      </form>
+    </dialog>
+
+    <!-- Diálogo Modal: Confirmar eliminación -->
+    <dialog id="modal-eliminar" class="modal-dialogo" aria-labelledby="modal-eliminar-titulo">
+      <div class="modal-contenido">
+        <div class="modal-cabecera">
+          <h3 id="modal-eliminar-titulo" class="modal-titulo">Eliminar Turno</h3>
+          <button type="button" id="boton-cerrar-modal-eliminar" class="boton-cerrar" aria-label="Cerrar ventana">✕</button>
+        </div>
+
+        <div class="modal-cuerpo">
+          <p id="modal-eliminar-mensaje">¿Está seguro de que desea eliminar este turno? Esta acción no se puede deshacer.</p>
+          <input type="hidden" id="eliminar-turno-id" value="">
+        </div>
+
+        <div class="modal-pie">
+          <button type="button" id="boton-cancelar-eliminar" class="boton boton-secundario">Cancelar</button>
+          <button type="button" id="boton-confirmar-eliminar" class="boton boton-peligro">Eliminar Definitivamente</button>
+        </div>
+      </div>
+    </dialog>
+
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
